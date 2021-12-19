@@ -1,5 +1,6 @@
 package;
 
+import states.TitleState;
 import flixel.FlxGame;
 import openfl.display.Sprite;
 import states.PlayState;
@@ -10,6 +11,6 @@ class Main extends Sprite
 	{
 		super();
 
-		addChild(new FlxGame(0, 0, PlayState));
+		addChild(new FlxGame(0, 0, TitleState));
 	}
 }

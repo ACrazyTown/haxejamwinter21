@@ -13,7 +13,7 @@ class GameOverSubstate extends FlxSubState
 {
     var texts:Array<String> = [
         "You're dead...",
-        "Hamster balls aren't rockproof, y'know?",
+        "Hampster balls aren't rockproof, y'know?",
         "Try not slamming into a boulder next time...",
         "Yikes..",
         "You had like... 3 chances, and yet you still failed.",
@@ -29,7 +29,6 @@ class GameOverSubstate extends FlxSubState
         add(overlay);
 
         var oopsText:FlxText = new FlxText(0, 100, 0, "Ooops!", 64);
-        oopsText.alpha = 0;
         oopsText.screenCenter(X);
         oopsText.color = FlxColor.WHITE;
         add(oopsText);
@@ -40,17 +39,20 @@ class GameOverSubstate extends FlxSubState
         funnyText.color = FlxColor.WHITE;
         add(funnyText);
 
-        FlxTween.tween(oopsText, {alpha: 1}, 2.25, {onComplete: function(tween:FlxTween)
-        {
-            FlxTween.tween(funnyText, {alpha: 1}, 4);
-        }});
-        
+        var shit:FlxText = new FlxText(0, funnyText.y + 200, 0, "Press R to retry\nPress Q to quit", 32);
+        shit.screenCenter(X);
+        add(shit);
+
+        FlxTween.tween(funnyText, {alpha: 1}, 3);
+		FlxTween.tween(shit, {alpha: 1}, 2.5);
     }
 
     override function update(elapsed:Float)
     {
         if (FlxG.keys.justPressed.R)
             FlxG.switchState(new PlayState());
+        if (FlxG.keys.justPressed.Q)
+            FlxG.switchState(new TitleState());
 
         super.update(elapsed);
     }

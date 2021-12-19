@@ -12,7 +12,7 @@ class Player extends FlxSprite
 
     public var maxSpeed:Float = 550;
     public var speed:Float = 450;
-    private var speedMultiplier:Float = 5; // probs not a multiplier maybe im just D
+    private var speedMultiplier:Float = 3.75; // probs not a multiplier maybe im just D
 
     public var iced:Bool = false;
 
@@ -29,9 +29,6 @@ class Player extends FlxSprite
         height = 120;
         centerOffsets();
 
-		maxVelocity.set(speed * 1.25);
-		drag.x = maxVelocity.x * 0.85;
-
         //iced = true;
     }
 
@@ -45,6 +42,25 @@ class Player extends FlxSprite
             angle += angleAmount;
 
 		super.update(elapsed);
+    }
+
+    public function updateMovementType(iceEffect:Bool)
+    {
+		velocity.set();
+		acceleration.set();
+
+        if (iceEffect)
+        {
+			maxVelocity.set(speed * 1.25);
+			drag.x = maxVelocity.x * 0.85;
+        }
+        else
+        {
+            maxVelocity.set();
+            drag.x = 0;
+        }
+        
+        iced = iceEffect;
     }
 
     function movementCheck()
@@ -72,7 +88,7 @@ class Player extends FlxSprite
             acceleration.x = 0;
 
 			if (FlxG.keys.anyPressed([LEFT, A]) && FlxG.keys.anyPressed([RIGHT, D]))
-				velocity.x = 0;
+				acceleration.x = 0;
 
 			if (FlxG.keys.anyPressed([LEFT, A]))
 			{

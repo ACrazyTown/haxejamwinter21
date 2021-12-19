@@ -5,13 +5,16 @@ import flixel.text.FlxText;
 
 class Score extends FlxBasic
 {
+    public var score:Int = 0;
+
     public var aliveTime:Int = 0;
     public var goodHits:Int = 0;
     public var badHits:Int = 0;
 
     public function updateScore(scoreText:FlxText)
     {
-        scoreText.text = "Score: " + calculateScore();
+        score = calculateScore();
+        scoreText.text = "Score: " + score;
     }
 
     public function calculateScore()

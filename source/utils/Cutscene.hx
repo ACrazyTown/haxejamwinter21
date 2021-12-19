@@ -66,7 +66,6 @@ class Cutscene extends FlxSubState
         // todo Figure out how to not make it crash
         if (dialogueTimer >= dialogue.dialogueTime[dialogue.dialogueIndex])
         {
-            trace("ball sex");
             dialogueText.text = dialogue.dialogue[dialogue.dialogueIndex];
             dialogue.dialogueIndex++;
         }
@@ -80,9 +79,9 @@ class IntroCutscene extends Cutscene
         super(true);
 
         dialogue = {
-            dialogue: ["Test 1 LOL!", "Test 2 LMAO!", "suck", "my", "Cockerone"],
+            dialogue: ["Test 1 LOL!", "Test 2 LMAO!", "aw"],
             dialogueIndex: 0,
-            dialogueTime: [0, 5, 7.5, 10, 15]
+            dialogueTime: [0, 5, 7.5]
         }
         
         //var overlay:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
