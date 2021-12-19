@@ -19,4 +19,10 @@ class Util
 		num = Math.round(num) / Math.pow(10, precision);
 		return num;
 	}
+
+	public static function mapToRange(input:Float, inMin:Float, inMax:Float, outMin:Float, outMax:Float):Float
+	{
+		var slope = (outMax - outMin) / (inMax - inMin);
+		return outMin + Math.round(slope * (input - inMin));
+	}
 }

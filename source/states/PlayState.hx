@@ -1,5 +1,6 @@
 package states;
 
+import flixel.tweens.FlxTween;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import utils.Score;
@@ -19,22 +20,28 @@ import utils.Cutscene.IntroCutscene;
 class PlayState extends FlxState
 {
 	var aliveTime:Float = 0;
+	var resetTime:Float = 0;
 
 	var spawnTimer:FlxTimer;
 
 	var objects:FlxTypedGroup<CollidableObject>;
+	var destroyedObjects:Int = 0;
+
+	var bg:FlxSprite;
 	var player:Player;
 
 	var score:Score;
 	var scoreText:FlxText;
 
+	var overlay:FlxSprite;
+
 	override public function create()
 	{
 		FlxG.fixedTimestep = true;
 
-		var background:FlxSprite = new FlxSprite().loadGraphic("assets/images/backdrop.png");
-		background.color = FlxColor.GREEN;
-		add(background);
+		bg = new FlxSprite().loadGraphic("assets/images/backdrop.png");
+		bg.color = FlxColor.GREEN;
+		add(bg);
 
 		objects = new FlxTypedGroup<CollidableObject>();
 		add(objects);
@@ -56,10 +63,16 @@ class PlayState extends FlxState
 	{	
 		super.update(elapsed);
 
-		FlxG.watch.addQuick('Objects', objects.length);
+		// debug watchers
+		FlxG.watch.addQuick('Alive Time', aliveTime);
+		FlxG.watch.addQuick('Reset Time', resetTime);
+		FlxG.watch.addQuick('Destroyed Objects', destroyedObjects);
 		FlxG.watch.addQuick('Lives', player.lives);
 
 		aliveTime += elapsed;
+
+		if (resetTime != 0 && aliveTime >= resetTime)
+			resetIceEffect();
 
 		score.aliveTime = Std.int(Util.truncateFloat(aliveTime, 2));
 		score.updateScore(scoreText);
@@ -72,44 +85,18 @@ class PlayState extends FlxState
 		objects.forEachAlive(function(obj:CollidableObject)
 		{
 			// Kill
-			if (obj.isOnScreen(FlxG.camera) && obj.y < -100)
-			{
-				obj.kill();
-				objects.remove(obj);
-				obj.destroy();
-			}
+			if (!obj.isOnScreen(FlxG.camera) && obj.y < -100)
+				removeObject(obj);
 
 			// Collision
 			if (FlxG.overlap(player, obj))
 			{
-				/*
-				if (!obj.good)
-				{
-					score.badHits += 1;
-					player.lives -= 1;
-
-					obj.kill();
-					objects.remove(obj);
-					obj.destroy();
-
-					if (player.lives <= 0)
-						openSubState(new GameOverSubstate());
-				}
-				else
-				{
-					score.goodHits += 1;
-
-					obj.kill();
-					objects.remove(obj);
-					obj.destroy();
-				}
-				*/
-
 				obj.onCollision();
+
+				if (player.lives <= 0)
+					openSubState(new GameOverSubstate());
 				
-				obj.kill();
-				objects.remove(obj);
-				obj.destroy();
+				removeObject(obj);
 			}
 		});
 	}
@@ -123,9 +110,9 @@ class PlayState extends FlxState
 
 			if (FlxG.random.bool(75))
 				daType = 0;
-			else if (FlxG.random.bool(35))
+			else if (FlxG.random.bool(40))
 				daType = 1;
-			else if (FlxG.random.bool(15))
+			else if (FlxG.random.bool(90))
 				daType = 2;
 
 			var dumbass:CollidableObject = new CollidableObject(xOffset * 1.5, FlxG.height + 400, daType);
@@ -140,12 +127,44 @@ class PlayState extends FlxState
 					case Good:
 						score.goodHits += 1;
 					case Ice:
-						// TODO: ICE
-						trace("TODO: ICE!!!");
+						FlxG.camera.flash(FlxColor.WHITE, 2.5);
+						
+						player.iced = true;
+						resetTime = aliveTime + 12; // Effect lasts 12 seconds
+						trace(resetTime);
+
+						bg.color = FlxColor.WHITE;
+
+						overlay = new FlxSprite().loadGraphic("assets/images/overlay.png");
+						overlay.alpha = 0;
+						add(overlay);
+
+						FlxTween.tween(overlay, {alpha: 1}, 2.75);
 				}
 			};
 			objects.add(dumbass);
 		}, 0);
+	}
+
+	function resetIceEffect()
+	{
+		FlxTween.tween(overlay, {alpha: 0}, 2.25);
+		
+		player.iced = false;
+
+		// if the bg is gonna be a completely new one then replace this!!
+		FlxTween.color(bg, 1.75, FlxColor.WHITE, FlxColor.GREEN);
+
+		resetTime = 0;
+	}
+
+	function removeObject(object:CollidableObject)
+	{
+		destroyedObjects += 1;
+
+		object.kill();
+		objects.remove(object);
+		object.destroy();
 	}
 
 	function openSubstate(SubState:FlxSubState)

@@ -1,0 +1,5 @@
+- Fix the fucking art
+- Music & Sound effects
+- Finish implementing Intro Cutscene
+- Menus & UI
+- Polish

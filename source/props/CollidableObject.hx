@@ -33,11 +33,11 @@ class CollidableObject extends FlxSprite
 		immovable = true;
 
 		typeData = dataFromInt(type);
-		this.type = dataFromInt(type).type;
+		this.type = typeData.type;
 
 		velocity.set(-moveVelocity, -moveVelocity);
 
-		loadGraphic(dataFromInt(type).imagePath);
+		loadGraphic(typeData.imagePath);
 	}
 
 	function dataFromInt(type:Int):ObjectData
@@ -49,5 +49,10 @@ class CollidableObject extends FlxSprite
 			case 2: return {type: Ice, imagePath: "assets/images/ice.png"};
 			default: return {type: Rock, imagePath: "assets/images/rock.png"};
 		}
+	}
+
+	public static function generateType():Int
+	{
+		return 0;
 	}
 }
