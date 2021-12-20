@@ -81,5 +81,5 @@
 	<!-- _________________________________ Custom _______________________________ -->
 
 	<!--Place custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->
-	<icon path="terrified.ico" />
+	<icon path="misc/terrified.ico" />
 </project>
